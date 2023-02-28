@@ -1,0 +1,58 @@
+server:
+  port: 3301
+spring:
+  application:
+    name: @artifactId@
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 123.60.165.53:8848
+        namespace: @nacosNamespace@
+        group: @nacos.group@
+      config:
+        server-addr: ${spring.cloud.nacos.discovery.server-addr}
+        namespace: @nacosNamespace@
+        group: @nacos.group@
+  config:
+    import:
+      - optional:nacos:${spring.application.name}-${spring.profiles.active}.yml
+
+  profiles:
+    active: @profiles.active@
+#  redis:
+#    cluster:
+#      nodes: 123.60.165.53:6379
+#    database: 0
+#    lettuce:
+#      pool:
+#        max-active: 64 #最大连接数，0表示无限制
+#        max-idle: 32 #最大等待连接数，0表示无限制
+#        min-idle: 0 #最小等待连接数，0表示无限制
+#        max-wait: 20ms #最大建立连接等待时间，-1表示无限制
+#      shutdown-timeout: 100ms
+#    password: foobared
+
+
+logging:
+  config: classpath:log4j2-${spring.profiles.active}.xml
+
+
+
+#
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://123.60.165.53:3306/wnh?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+#    username: root
+#    password: root
+#
+#
+#mybatis-plus:
+#  configuration:
+#    map-underscore-to-camel-case: true
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#  mapper-locations: classpath*:mapper/**/*Mapper.xml
+#  global-config:
+#    db-config:
+#      logic-delete-field: deleted
+#      logic-not-delete-value: 0
+#      logic-delete-value: 1

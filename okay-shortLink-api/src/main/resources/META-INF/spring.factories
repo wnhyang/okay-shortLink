@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  org.okay4cloud.okay.shortlink.api.factory.LinkMapFeignFallbackFactory
