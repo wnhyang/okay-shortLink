@@ -4,7 +4,7 @@ RUN mkdir -p /okay-shortLink
 
 WORKDIR /okay-shortLink
 
-ARG JAR_FILE=target/okay-shortLink-service.jar
+ARG JAR_FILE=./target/okay-shortLink-service.jar
 
 COPY ${JAR_FILE} app.jar
 
