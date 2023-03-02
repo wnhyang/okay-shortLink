@@ -13,7 +13,6 @@
 
     <properties>
         <okay.short-link.api.version>1.0-SNAPSHOT</okay.short-link.api.version>
-        <disruptor.version>3.4.4</disruptor.version>
         <dynamic-ds.version>3.5.1</dynamic-ds.version>
         <guava.version>31.1-jre</guava.version>
     </properties>
@@ -47,13 +46,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-log4j2</artifactId>
-        </dependency>
-
-        <!--异步日志依赖-->
-        <dependency>
-            <groupId>com.lmax</groupId>
-            <artifactId>disruptor</artifactId>
-            <version>${disruptor.version}</version>
         </dependency>
 
         <!--feign 依赖-->
