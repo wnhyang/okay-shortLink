@@ -1,11 +1,9 @@
-FROM openjdk:8-jre
+FROM registry.cn-shanghai.aliyuncs.com/wnhyang/openjdk:8-jre
 
-# 挂载目录
-VOLUME /home/wnh/apps
 # 创建目录
-RUN mkdir -p /home/wnh/apps/okay-shortLink
+RUN mkdir -p /home/app
 # 指定路径
-WORKDIR /home/wnh/apps/okay-shortLink
+WORKDIR /home/app
 
 ARG JAR_FILE=./target/okay-shortLink-service.jar
 
