@@ -1,5 +1,6 @@
 package org.okay4cloud.okay.shortlink.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.okay4cloud.okay.shortlink.service.LinkMapService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,16 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2023/1/12
  **/
 @RestController
+@RequiredArgsConstructor
 public class RedirectController {
     private static final Logger LOGGER = LoggerFactory.getLogger(RedirectController.class);
 
     private static final String REDIRECT = "redirect:";
 
     final LinkMapService linkMapService;
-
-    public RedirectController(LinkMapService linkMapService) {
-        this.linkMapService = linkMapService;
-    }
 
     @Value("${config.info}")
     private String info;
@@ -39,7 +37,7 @@ public class RedirectController {
      * @param s 短链字符串
      * @return 重定向长链接
      */
-    @GetMapping("/r/{s}")
+    @GetMapping("/{s}")
     public String redirect(@PathVariable("s") String s) {
         LOGGER.info("重定向 {}", s);
         return REDIRECT + linkMapService.redirect(s);

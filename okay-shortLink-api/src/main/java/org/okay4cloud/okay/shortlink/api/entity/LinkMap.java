@@ -26,10 +26,11 @@ import java.time.LocalDateTime;
 @TableName("link_map")
 public class LinkMap extends BaseEntity {
 
+    private static final long serialVersionUID = 1L;
     /**
      * 主键id
      */
-    @TableId(value = "id", type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.ASSIGN_ID)
     private Long id;
 
     /**
@@ -50,7 +51,7 @@ public class LinkMap extends BaseEntity {
      */
     @NotNull(message = "类型不能为空")
     @TableField("type")
-    private Integer type;
+    private String type;
 
     /**
      * 说明
@@ -64,11 +65,5 @@ public class LinkMap extends BaseEntity {
     @Future
     @TableField("expire_time")
     private LocalDateTime expireTime;
-
-    /**
-     * 是否删除
-     */
-    @TableField("deleted")
-    private Integer deleted;
 
 }

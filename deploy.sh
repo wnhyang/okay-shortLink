@@ -22,8 +22,10 @@ stop_app() {
         then
         docker stop ${CONTAINER}
         docker rm ${CONTAINER}
+        echo "The container named ${APP_NAME} has been stopped and deleted"
+    else
+      echo "The container named ${APP_NAME} does not exist"
     fi
-    echo "The container named ${APP_NAME} does not exist or has been stopped and deleted"
     # 删除镜像
     if [[ -n "${DOCKER_URL}" ]]
         then
@@ -39,8 +41,10 @@ stop_app() {
     if [[ -n "${IMAGE}" ]]
         then
         docker rmi ${IMAGE}
+        echo "The image named ${APP_NAME} has been deleted"
+    else
+      echo "The image named ${APP_NAME} does not exist"
     fi
-    echo "The image named ${APP_NAME} does not exist or has been deleted"
 
 }
 

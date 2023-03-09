@@ -2,6 +2,7 @@ package org.okay4cloud.okay.shortlink.controller;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import lombok.RequiredArgsConstructor;
 import org.okay4cloud.okay.common.core.util.R;
 import org.okay4cloud.okay.shortlink.api.entity.LinkMap;
 import org.okay4cloud.okay.shortlink.service.LinkMapService;
@@ -19,15 +20,12 @@ import java.util.List;
  * @since 2023-02-21
  */
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/linkMap")
 public class LinkMapController {
     private static final Logger LOGGER = LoggerFactory.getLogger(LinkMapController.class);
 
     private final LinkMapService linkMapService;
-
-    public LinkMapController(LinkMapService linkMapService) {
-        this.linkMapService = linkMapService;
-    }
 
     /**
      * 查看链接映射列表
@@ -91,7 +89,7 @@ public class LinkMapController {
      * @return R
      */
     @DeleteMapping("/{linkMapId}")
-    public R deleteById(@PathVariable Long linkMapId) {
+    public R<Boolean> deleteById(@PathVariable Long linkMapId) {
         return R.ok(linkMapService.removeById(linkMapId));
     }
 }

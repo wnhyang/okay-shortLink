@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
+import lombok.RequiredArgsConstructor;
 import org.okay4cloud.okay.common.core.exception.CheckedException;
 import org.okay4cloud.okay.common.core.util.R;
 import org.okay4cloud.okay.shortlink.api.entity.LinkMap;
@@ -28,6 +29,7 @@ import java.time.LocalDateTime;
  * @since 2023-02-21
  */
 @Service
+@RequiredArgsConstructor
 public class LinkMapServiceImpl extends ServiceImpl<LinkMapMapper, LinkMap> implements LinkMapService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LinkMapServiceImpl.class);
@@ -37,12 +39,6 @@ public class LinkMapServiceImpl extends ServiceImpl<LinkMapMapper, LinkMap> impl
 //    private static final BloomFilter<String> BLOOM_FILTER = BloomFilter.create(Funnels.stringFunnel(Charset.defaultCharset()), Encoder62.SIZE);
 
     private static final String STR = "=R@T#D";
-
-    private final LinkMapMapper linkMapMapper;
-
-    public LinkMapServiceImpl(LinkMapMapper linkMapMapper) {
-        this.linkMapMapper = linkMapMapper;
-    }
 
     /**
      * 根据短链接重定向到长链接
@@ -55,7 +51,7 @@ public class LinkMapServiceImpl extends ServiceImpl<LinkMapMapper, LinkMap> impl
      */
     @Override
     public String redirect(String code) {
-        LinkMap linkMap = linkMapMapper.selectOne(new LambdaQueryWrapper<LinkMap>().eq(LinkMap::getCode, code).ge(LinkMap::getExpireTime, LocalDateTime.now()));
+        LinkMap linkMap = baseMapper.selectOne(new LambdaQueryWrapper<LinkMap>().eq(LinkMap::getCode, code).ge(LinkMap::getExpireTime, LocalDateTime.now()));
         if (linkMap == null) {
             throw new CheckedException("短链接不存在或已失效");
         }
@@ -110,7 +106,7 @@ public class LinkMapServiceImpl extends ServiceImpl<LinkMapMapper, LinkMap> impl
         //          b.2、未删除过期，更新延期
 
         String link = linkMap.getLink();
-        LinkMap one = linkMapMapper.selectOne(new LambdaQueryWrapper<LinkMap>().eq(LinkMap::getLink, link));
+        LinkMap one = baseMapper.selectOne(new LambdaQueryWrapper<LinkMap>().eq(LinkMap::getLink, link));
         if (null == one) {
             while (true) {
                 LOGGER.debug("链接为:{}", link);
@@ -131,7 +127,7 @@ public class LinkMapServiceImpl extends ServiceImpl<LinkMapMapper, LinkMap> impl
                 if (null == linkMap.getExpireTime()) {
                     linkMap.setExpireTime(LocalDateTime.now().plusDays(90));
                 }
-                int insert = linkMapMapper.insert(linkMap);
+                int insert = baseMapper.insert(linkMap);
                 if (insert < 1) {
                     link += STR;
                     LOGGER.debug("短链接已存在,新长链接为:{}", link);
@@ -142,7 +138,7 @@ public class LinkMapServiceImpl extends ServiceImpl<LinkMapMapper, LinkMap> impl
             }
         } else {
             one.setExpireTime(LocalDateTime.now());
-            linkMapMapper.updateById(one);
+            baseMapper.updateById(one);
             return Boolean.TRUE;
         }
     }
