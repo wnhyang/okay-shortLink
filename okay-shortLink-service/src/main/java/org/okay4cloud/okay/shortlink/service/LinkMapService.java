@@ -2,7 +2,11 @@ package org.okay4cloud.okay.shortlink.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.okay4cloud.okay.common.core.util.R;
+import org.okay4cloud.okay.shortlink.api.dto.LinkMapDTO;
 import org.okay4cloud.okay.shortlink.api.entity.LinkMap;
+import org.okay4cloud.okay.shortlink.api.vo.VisitsVO;
+
+import java.util.List;
 
 /**
  * <p>
@@ -32,8 +36,42 @@ public interface LinkMapService extends IService<LinkMap> {
     /**
      * 添加链接映射
      *
-     * @param linkMap
-     * @return
+     * @param linkMapDTO 链接
+     * @return true/false
      */
-    Boolean saveLinkMap(LinkMap linkMap);
+    Boolean saveLinkMap(LinkMapDTO linkMapDTO);
+
+    /**
+     * 根据ids删除链接
+     *
+     * @param ids 链接ids
+     * @return true/false
+     */
+    Boolean deleteLinkMapByIds(List<Long> ids);
+
+    /**
+     * 根据id获取链接访问量
+     * 默认30天
+     *
+     * @param id 链接id
+     * @return 访问量列表
+     */
+    List<VisitsVO> getVisits(Long id);
+
+    /**
+     * 根据id获取链接访问量
+     *
+     * @param id   链接id
+     * @param days 天数
+     * @return 访问量
+     */
+    List<VisitsVO> getVisits(Long id, long days);
+
+    /**
+     * 清空链接缓存
+     *
+     * @param ids 链接ids
+     */
+    void clearLinkMapCache(List<Long> ids);
+
 }

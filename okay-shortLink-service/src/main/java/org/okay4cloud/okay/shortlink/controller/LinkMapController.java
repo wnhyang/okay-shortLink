@@ -1,10 +1,14 @@
 package org.okay4cloud.okay.shortlink.controller;
 
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.okay4cloud.okay.common.core.util.R;
+import org.okay4cloud.okay.shortlink.api.dto.LinkMapDTO;
 import org.okay4cloud.okay.shortlink.api.entity.LinkMap;
+import org.okay4cloud.okay.shortlink.api.vo.VisitsVO;
 import org.okay4cloud.okay.shortlink.service.LinkMapService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,31 +48,31 @@ public class LinkMapController {
      * @return 链接映射列表
      */
     @GetMapping("/list")
-    public R list(Page page) {
-        return R.ok(linkMapService.page(page));
+    public R<IPage<LinkMap>> list(Page page, LinkMap linkMap) {
+        return R.ok(linkMapService.page(page, Wrappers.query(linkMap)));
     }
 
     /**
      * 通过id查询链接映射
      *
-     * @param linkMapId 链接id
+     * @param id 链接id
      * @return R
      */
-    @GetMapping("/{linkMapId}")
-    public R<LinkMap> getById(@PathVariable Long linkMapId) {
-        return R.ok(linkMapService.getById(linkMapId));
+    @GetMapping("/{id:\\d+}")
+    public R<LinkMap> getById(@PathVariable Long id) {
+        return R.ok(linkMapService.getById(id));
     }
 
     /**
      * 新增链接映射
      *
-     * @param linkMap 链接
+     * @param linkMapDTO 链接
      * @return true/false
      */
     @PostMapping
-    public R<Boolean> save(@Valid @RequestBody LinkMap linkMap) {
-        LOGGER.debug("生成短链接{}", linkMap);
-        return R.ok(linkMapService.saveLinkMap(linkMap));
+    public R<Boolean> save(@Valid @RequestBody LinkMapDTO linkMapDTO) {
+        LOGGER.debug("生成短链接{}", linkMapDTO);
+        return R.ok(linkMapService.saveLinkMap(linkMapDTO));
     }
 
     /**
@@ -85,11 +89,22 @@ public class LinkMapController {
     /**
      * 根据id删除链接映射
      *
-     * @param linkMapId 短链接id
+     * @param ids 链接ids
      * @return R
      */
-    @DeleteMapping("/{linkMapId}")
-    public R<Boolean> deleteById(@PathVariable Long linkMapId) {
-        return R.ok(linkMapService.removeById(linkMapId));
+    @DeleteMapping("/{ids}")
+    public R<Boolean> deleteByIds(@PathVariable List<Long> ids) {
+        return R.ok(linkMapService.removeByIds(ids));
+    }
+
+    /**
+     * 根据id查询链接访问量
+     *
+     * @param id 链接id
+     * @return R
+     */
+    @GetMapping("/v/{id:\\d+}")
+    public R<List<VisitsVO>> getVisits(@PathVariable Long id) {
+        return R.ok(linkMapService.getVisits(id));
     }
 }

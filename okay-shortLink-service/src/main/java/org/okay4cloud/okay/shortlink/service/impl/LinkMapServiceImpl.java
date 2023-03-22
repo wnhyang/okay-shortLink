@@ -1,5 +1,6 @@
 package org.okay4cloud.okay.shortlink.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.hash.HashCode;
@@ -8,17 +9,27 @@ import com.google.common.hash.Hashing;
 import lombok.RequiredArgsConstructor;
 import org.okay4cloud.okay.common.core.exception.CheckedException;
 import org.okay4cloud.okay.common.core.util.R;
+import org.okay4cloud.okay.common.core.util.RedisUtils;
+import org.okay4cloud.okay.shortlink.api.dto.LinkMapDTO;
 import org.okay4cloud.okay.shortlink.api.entity.LinkMap;
+import org.okay4cloud.okay.shortlink.api.vo.VisitsVO;
+import org.okay4cloud.okay.shortlink.constant.CacheConstants;
 import org.okay4cloud.okay.shortlink.mapper.LinkMapMapper;
 import org.okay4cloud.okay.shortlink.service.LinkMapService;
 import org.okay4cloud.okay.shortlink.util.Encoder62;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -31,6 +42,10 @@ import java.time.LocalDateTime;
 @Service
 @RequiredArgsConstructor
 public class LinkMapServiceImpl extends ServiceImpl<LinkMapMapper, LinkMap> implements LinkMapService {
+
+    private final ValueOperations<String, String> valueOperations;
+
+    private final RedisTemplate<String, Object> redisTemplate;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LinkMapServiceImpl.class);
 
@@ -51,9 +66,19 @@ public class LinkMapServiceImpl extends ServiceImpl<LinkMapMapper, LinkMap> impl
      */
     @Override
     public String redirect(String code) {
-        LinkMap linkMap = baseMapper.selectOne(new LambdaQueryWrapper<LinkMap>().eq(LinkMap::getCode, code).ge(LinkMap::getExpireTime, LocalDateTime.now()));
-        if (linkMap == null) {
-            throw new CheckedException("短链接不存在或已失效");
+        LinkMap linkMap = baseMapper.selectOne(new LambdaQueryWrapper<LinkMap>()
+                .eq(LinkMap::getCode, code)
+                .ge(LinkMap::getExpireTime, LocalDateTime.now()));
+        if (null == linkMap) {
+            throw new CheckedException("链接不存在或已失效");
+        }
+        String now = LocalDate.now().toString();
+        String key = RedisUtils.getKey(CacheConstants.LINK_VISITS, linkMap.getId(), now);
+        Object value = valueOperations.get(key);
+        if (null != value) {
+            valueOperations.increment(key);
+        } else {
+            valueOperations.set(key, "1", RedisUtils.TIME_OUT_30, TimeUnit.DAYS);
         }
         return linkMap.getLink();
     }
@@ -96,9 +121,11 @@ public class LinkMapServiceImpl extends ServiceImpl<LinkMapMapper, LinkMap> impl
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean saveLinkMap(LinkMap linkMap) {
+    public Boolean saveLinkMap(LinkMapDTO linkMapDTO) {
 
-        LOGGER.debug("链接映射:{}", linkMap);
+        LOGGER.debug("链接映射:{}", linkMapDTO);
+        LinkMap linkMap = new LinkMap();
+        BeanUtil.copyProperties(linkMapDTO, linkMap);
         // 1、查询是否已存在改长链接
         // 可能存在以下情况
         //  a、不存在，算法生成短链接，要求，短链唯一，过期时间默认90天
@@ -106,7 +133,8 @@ public class LinkMapServiceImpl extends ServiceImpl<LinkMapMapper, LinkMap> impl
         //          b.2、未删除过期，更新延期
 
         String link = linkMap.getLink();
-        LinkMap one = baseMapper.selectOne(new LambdaQueryWrapper<LinkMap>().eq(LinkMap::getLink, link));
+        LinkMap one = baseMapper.selectOne(new LambdaQueryWrapper<LinkMap>()
+                .eq(LinkMap::getLink, link));
         if (null == one) {
             while (true) {
                 LOGGER.debug("链接为:{}", link);
@@ -142,4 +170,46 @@ public class LinkMapServiceImpl extends ServiceImpl<LinkMapMapper, LinkMap> impl
             return Boolean.TRUE;
         }
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean deleteLinkMapByIds(List<Long> ids) {
+        int i = baseMapper.deleteBatchIds(ids);
+        clearLinkMapCache(ids);
+        return i > 0;
+    }
+
+    @Override
+    public List<VisitsVO> getVisits(Long id) {
+        return getVisits(id, RedisUtils.TIME_OUT_30);
+    }
+
+    @Override
+    public List<VisitsVO> getVisits(Long id, long days) {
+        LinkMap linkMap = baseMapper.selectById(id);
+        if (null == linkMap) {
+            return null;
+        }
+        LocalDate now = LocalDate.now();
+        List<VisitsVO> visitsVOList = new ArrayList<>();
+        for (int i = 0; i < days; i++) {
+            String date = now.minusDays(i).toString();
+            String key = RedisUtils.getKey(CacheConstants.LINK_VISITS, id, date);
+            String count = valueOperations.get(key);
+            VisitsVO visitsVO = new VisitsVO();
+            visitsVO.setDate(date);
+            visitsVO.setCount(count);
+            visitsVOList.add(visitsVO);
+        }
+        return visitsVOList;
+    }
+
+    @Override
+    public void clearLinkMapCache(List<Long> ids) {
+        for (Long id : ids) {
+            String key = RedisUtils.getKey(CacheConstants.LINK_VISITS, id);
+            redisTemplate.delete(key);
+        }
+    }
+
 }

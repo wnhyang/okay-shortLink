@@ -61,6 +61,7 @@ start_app() {
     # 运行容器
     docker run -v /home/app/logs:/home/app/logs \
                -p ${APP_PORT}:${APP_PORT} \
+               --add-host nacos:123.60.165.53 \
                --name ${APP_NAME} \
                -d ${DOCKER_URL}
      CONTAINER_ID=`docker ps -a | grep -v "grep" | grep ${APP_NAME} | awk -F: '{print $1}' | awk  '{print $1}' | head -n 1`

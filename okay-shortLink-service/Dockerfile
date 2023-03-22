@@ -13,4 +13,4 @@ EXPOSE 3301
 
 ENV TZ=Asia/Shanghai JAVA_OPTS="-Xms128m -Xmx256m -Djava.security.egd=file:/dev/./urandom"
 
-CMD sleep 60; java -jar app.jar $JAVA_OPTS
+ENTRYPOINT ["java","-jar","app.jar","$JAVA_OPTS"]
