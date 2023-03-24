@@ -24,6 +24,7 @@
         <spring-cloud.version>2021.0.4</spring-cloud.version>
         <spring-cloud-alibaba.version>2021.0.4.0</spring-cloud-alibaba.version>
         <mybatis-plus.version>3.5.1</mybatis-plus.version>
+        <xxl-job.version>2.3.1</xxl-job.version>
         <maven.plugins.version>2.8</maven.plugins.version>
     </properties>
 

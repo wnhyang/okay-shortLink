@@ -56,7 +56,6 @@
 
         <root level="info">
             <appender-ref ref="Console"/>
-            <appender-ref ref="File"/>
             <appender-ref ref="RollingFileInfo"/>
         </root>
     </loggers>

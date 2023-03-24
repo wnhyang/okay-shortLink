@@ -110,7 +110,7 @@ public class LinkMapServiceImpl extends ServiceImpl<LinkMapMapper, LinkMap> impl
 //                link += STR;
 //                LOGGER.debug("contain,new code:{}", code);
 //            } else {
-//                linkMapMapper.insert(linkMap);
+//                baseMapper.insert(linkMap);
 //                BLOOM_FILTER.put(code);
 //                LOGGER.debug("not contain,put({})", code);
 //                break;

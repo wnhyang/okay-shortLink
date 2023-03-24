@@ -16,6 +16,7 @@ spring:
   config:
     import:
       - optional:nacos:${spring.application.name}-${spring.profiles.active}.yml
+      - optional:nacos:${spring.application.name}-xxl-job-${spring.profiles.active}.properties
 
   profiles:
     active: @profiles.active@
