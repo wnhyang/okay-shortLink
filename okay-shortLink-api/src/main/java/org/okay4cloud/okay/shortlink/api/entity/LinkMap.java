@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.okay4cloud.okay.common.mybatis.base.BaseEntity;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -65,5 +66,9 @@ public class LinkMap extends BaseEntity {
     @Future
     @TableField("expire_time")
     private LocalDateTime expireTime;
+
+    @Email
+    @TableField("email")
+    private String email;
 
 }

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>${subject}</title>
+</head>
+<body>
+<h1 th:text="${title}"></h1>
+<table border="1" cellpadding="3" style="border-collapse:collapse; width:80%;">
+    <thead style="font-weight: bold;color: #ffffff;background-color: #ff8c00;">
+    <tr>
+        <td width="20%"> + 短链接 +</td>
+        <td width="10%"> + 链接 +</td>
+        <td width="20%"> + 描述 +</td>
+        <td width="10%"> + 过期时间 +</td>
+    </tr>
+    </thead>
+    <tbody>
+    <!--/*@thymesVar id="list" type="List<org.okay4cloud.okay.shortlink.api.entity.LinkMap>"*/-->
+    <tr th:each="item : ${list}">
+        <td th:text="${item.code}"></td>
+        <td th:text="${item.link}"></td>
+        <td th:text="${item.remark}"></td>
+        <td th:text="${item.expireTime}"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
