@@ -8,7 +8,6 @@ import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import lombok.RequiredArgsConstructor;
 import org.okay4cloud.okay.common.core.exception.CheckedException;
-import org.okay4cloud.okay.common.core.util.R;
 import org.okay4cloud.okay.common.core.util.RedisUtils;
 import org.okay4cloud.okay.shortlink.api.dto.LinkMapDTO;
 import org.okay4cloud.okay.shortlink.api.entity.LinkMap;
@@ -51,8 +50,6 @@ public class LinkMapServiceImpl extends ServiceImpl<LinkMapMapper, LinkMap> impl
 
     private static final HashFunction HASH_FUNCTION = Hashing.murmur3_32_fixed();
 
-//    private static final BloomFilter<String> BLOOM_FILTER = BloomFilter.create(Funnels.stringFunnel(Charset.defaultCharset()), Encoder62.SIZE);
-
     private static final String STR = "=R@T#D";
 
     /**
@@ -81,42 +78,6 @@ public class LinkMapServiceImpl extends ServiceImpl<LinkMapMapper, LinkMap> impl
             valueOperations.set(key, "1", RedisUtils.TIME_OUT_30, TimeUnit.DAYS);
         }
         return linkMap.getLink();
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public R<String> linkMapWithBloomFilter(String link) {
-        String code = "";
-//        while (true) {
-//            LOGGER.debug("link:{}", link);
-//            // 1、MurmurHash加密
-//            HashCode hashCode = HASH_FUNCTION.hashString(link, StandardCharsets.UTF_8);
-//
-//            // 2、短链
-//            try {
-//                code = Encoder62.encode62(hashCode.padToLong());
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//            LOGGER.debug("code:{}", code);
-//
-//            //3、布隆过滤器
-//            boolean contain = BLOOM_FILTER.mightContain(code);
-//
-//            LinkMap linkMap = new LinkMap();
-//            linkMap.setCode(code);
-//            linkMap.setLink(link);
-//            if (contain) {
-//                link += STR;
-//                LOGGER.debug("contain,new code:{}", code);
-//            } else {
-//                baseMapper.insert(linkMap);
-//                BLOOM_FILTER.put(code);
-//                LOGGER.debug("not contain,put({})", code);
-//                break;
-//            }
-//        }
-        return R.ok(code);
     }
 
     @Override
@@ -196,6 +157,9 @@ public class LinkMapServiceImpl extends ServiceImpl<LinkMapMapper, LinkMap> impl
             String date = now.minusDays(i).toString();
             String key = RedisUtils.getKey(CacheConstants.LINK_VISITS, id, date);
             String count = valueOperations.get(key);
+            if ("0".equals(count)) {
+                continue;
+            }
             VisitsVO visitsVO = new VisitsVO();
             visitsVO.setDate(date);
             visitsVO.setCount(count);

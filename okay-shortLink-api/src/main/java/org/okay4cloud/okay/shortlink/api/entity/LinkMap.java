@@ -67,6 +67,9 @@ public class LinkMap extends BaseEntity {
     @TableField("expire_time")
     private LocalDateTime expireTime;
 
+    /**
+     * 通知邮箱
+     */
     @Email
     @TableField("email")
     private String email;

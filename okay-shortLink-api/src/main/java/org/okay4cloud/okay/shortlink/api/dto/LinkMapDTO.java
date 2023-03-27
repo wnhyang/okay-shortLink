@@ -2,6 +2,7 @@ package org.okay4cloud.okay.shortlink.api.dto;
 
 import lombok.Data;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -38,4 +39,10 @@ public class LinkMapDTO implements Serializable {
      */
     @Future
     private LocalDateTime expireTime;
+
+    /**
+     * 通知邮箱
+     */
+    @Email
+    private String email;
 }

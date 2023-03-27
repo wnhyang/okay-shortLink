@@ -48,7 +48,7 @@ public class LinkMapController {
      * @return 链接映射列表
      */
     @GetMapping("/list")
-    public R<IPage<LinkMap>> list(Page page, LinkMap linkMap) {
+    public R<IPage<LinkMap>> list(Page<LinkMap> page, LinkMap linkMap) {
         return R.ok(linkMapService.page(page, Wrappers.query(linkMap)));
     }
 
