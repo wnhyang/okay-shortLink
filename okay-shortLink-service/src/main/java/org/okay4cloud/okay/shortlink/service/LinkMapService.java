@@ -33,6 +33,23 @@ public interface LinkMapService extends IService<LinkMap> {
     Boolean saveLinkMap(LinkMapDTO linkMapDTO);
 
     /**
+     * 根据id查询链接
+     *
+     * @param id 链接id
+     * @return 链接
+     */
+    LinkMap getLinkMapById(Long id);
+
+
+    /**
+     * 更新链接映射
+     *
+     * @param linkMap 链接映射，只允许更新备注，类型，邮箱、过期时间
+     * @return true/false
+     */
+    Boolean updateLinkMapById(LinkMap linkMap);
+
+    /**
      * 根据ids删除链接
      *
      * @param ids 链接ids
@@ -60,16 +77,7 @@ public interface LinkMapService extends IService<LinkMap> {
 
     /**
      * 清空链接缓存
-     *
-     * @param ids 链接ids
      */
-    void clearLinkMapCache(List<Long> ids);
+    void clearLinkMapCache();
 
-    /**
-     * 更新链接映射
-     *
-     * @param linkMap 链接映射，只允许更新备注，类型，邮箱、过期时间
-     * @return true/false
-     */
-    Boolean updateLinkMapById(LinkMap linkMap);
 }

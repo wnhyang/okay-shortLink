@@ -38,6 +38,7 @@ public class LinkMapController {
      */
     @GetMapping("/all")
     public R<List<LinkMap>> all() {
+        LOGGER.info("查询全部数据。。。");
         return R.ok(linkMapService.list());
     }
 
@@ -48,7 +49,8 @@ public class LinkMapController {
      * @return 链接映射列表
      */
     @GetMapping("/list")
-    public R<IPage<LinkMap>> list(Page<LinkMap> page, LinkMap linkMap) {
+    public R<IPage<LinkMap>> list(Page page, LinkMap linkMap) {
+        LOGGER.info("分页查询 size {},current {},linkMap {}", page.getSize(), page.getCurrent(), linkMap);
         return R.ok(linkMapService.page(page, Wrappers.query(linkMap)));
     }
 
@@ -60,7 +62,8 @@ public class LinkMapController {
      */
     @GetMapping("/{id:\\d+}")
     public R<LinkMap> getById(@PathVariable Long id) {
-        return R.ok(linkMapService.getById(id));
+        LOGGER.info("查询短链接id {}", id);
+        return R.ok(linkMapService.getLinkMapById(id));
     }
 
     /**
@@ -95,8 +98,8 @@ public class LinkMapController {
      */
     @DeleteMapping("/{ids}")
     public R<Boolean> deleteByIds(@PathVariable List<Long> ids) {
-        LOGGER.info("删除链接ids {}", ids);
-        return R.ok(linkMapService.removeByIds(ids));
+        LOGGER.info("删除链接ids {}", ids.toString());
+        return R.ok(linkMapService.deleteLinkMapByIds(ids));
     }
 
     /**
@@ -109,5 +112,17 @@ public class LinkMapController {
     public R<List<VisitsVO>> getVisits(@PathVariable Long id) {
         LOGGER.info("查看链接访问量 {}", id);
         return R.ok(linkMapService.getVisits(id));
+    }
+
+    /**
+     * 清空链接缓存
+     *
+     * @return true
+     */
+    @DeleteMapping("/cache")
+    public R<Boolean> clearLinkMapCache() {
+        LOGGER.info("清空链接缓存。。。");
+        linkMapService.clearLinkMapCache();
+        return R.ok(true);
     }
 }

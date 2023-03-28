@@ -49,10 +49,9 @@ public class RedirectController {
      * @param code 短链字符串
      * @return 重定向长链接
      */
-//    @Visit(value = "记录访问量", prefix = CacheConstants.LINK_VISITS, timeout = RedisUtils.TIME_OUT_30)
     @GetMapping("/r/{code}")
     public String redirect(@PathVariable("code") String code) {
-        LOGGER.info("重定向 {}", code);
+        LOGGER.info("重定向code {}", code);
         return REDIRECT + linkMapService.redirect(code);
     }
 

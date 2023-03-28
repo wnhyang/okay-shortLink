@@ -18,7 +18,8 @@ import org.okay4cloud.okay.shortlink.service.LinkMapService;
 import org.okay4cloud.okay.shortlink.util.Encoder62;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,8 +45,6 @@ public class LinkMapServiceImpl extends ServiceImpl<LinkMapMapper, LinkMap> impl
 
     private final ValueOperations<String, String> valueOperations;
 
-    private final RedisTemplate<String, Object> redisTemplate;
-
     private static final Logger LOGGER = LoggerFactory.getLogger(LinkMapServiceImpl.class);
 
     private static final HashFunction HASH_FUNCTION = Hashing.murmur3_32_fixed();
@@ -62,6 +61,7 @@ public class LinkMapServiceImpl extends ServiceImpl<LinkMapMapper, LinkMap> impl
      * @return 长链接
      */
     @Override
+    @Cacheable(value = CacheConstants.LINK, key = "#code", unless = "#result==null")
     public String redirect(String code) {
         LinkMap linkMap = baseMapper.selectOne(new LambdaQueryWrapper<LinkMap>()
                 .eq(LinkMap::getCode, code)
@@ -83,7 +83,6 @@ public class LinkMapServiceImpl extends ServiceImpl<LinkMapMapper, LinkMap> impl
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean saveLinkMap(LinkMapDTO linkMapDTO) {
-
         LOGGER.debug("链接映射:{}", linkMapDTO);
         LinkMap linkMap = new LinkMap();
         BeanUtil.copyProperties(linkMapDTO, linkMap);
@@ -133,11 +132,29 @@ public class LinkMapServiceImpl extends ServiceImpl<LinkMapMapper, LinkMap> impl
     }
 
     @Override
+    @Cacheable(value = CacheConstants.LINK_DETAILS, key = "#id", unless = "#result == null")
+    public LinkMap getLinkMapById(Long id) {
+        return this.getById(id);
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = {CacheConstants.LINK_DETAILS}, allEntries = true)
+    public Boolean updateLinkMapById(LinkMap linkMap) {
+        LinkMap entity = new LinkMap();
+        entity.setId(linkMap.getId());
+        entity.setType(linkMap.getType());
+        entity.setRemark(linkMap.getRemark());
+        entity.setExpireTime(linkMap.getExpireTime());
+        entity.setEmail(linkMap.getEmail());
+        return this.updateById(entity);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = {CacheConstants.LINK_DETAILS, CacheConstants.LINK}, allEntries = true)
     public Boolean deleteLinkMapByIds(List<Long> ids) {
-        int i = baseMapper.deleteBatchIds(ids);
-        clearLinkMapCache(ids);
-        return i > 0;
+        return this.removeByIds(ids);
     }
 
     @Override
@@ -169,22 +186,9 @@ public class LinkMapServiceImpl extends ServiceImpl<LinkMapMapper, LinkMap> impl
     }
 
     @Override
-    public void clearLinkMapCache(List<Long> ids) {
-        for (Long id : ids) {
-            String key = RedisUtils.getKey(CacheConstants.LINK_VISITS, id);
-            redisTemplate.delete(key);
-        }
-    }
+    @CacheEvict(value = {CacheConstants.LINK_DETAILS, CacheConstants.LINK}, allEntries = true)
+    public void clearLinkMapCache() {
 
-    @Override
-    public Boolean updateLinkMapById(LinkMap linkMap) {
-        LinkMap entity = new LinkMap();
-        entity.setId(linkMap.getId());
-        entity.setType(linkMap.getType());
-        entity.setRemark(linkMap.getRemark());
-        entity.setExpireTime(linkMap.getExpireTime());
-        entity.setEmail(linkMap.getEmail());
-        return this.updateById(entity);
     }
 
 }
