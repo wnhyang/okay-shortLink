@@ -65,4 +65,11 @@ public interface LinkMapService extends IService<LinkMap> {
      */
     void clearLinkMapCache(List<Long> ids);
 
+    /**
+     * 更新链接映射
+     *
+     * @param linkMap 链接映射，只允许更新备注，类型，邮箱、过期时间
+     * @return true/false
+     */
+    Boolean updateLinkMapById(LinkMap linkMap);
 }

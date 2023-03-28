@@ -157,7 +157,7 @@ public class LinkMapServiceImpl extends ServiceImpl<LinkMapMapper, LinkMap> impl
             String date = now.minusDays(i).toString();
             String key = RedisUtils.getKey(CacheConstants.LINK_VISITS, id, date);
             String count = valueOperations.get(key);
-            if ("0".equals(count)) {
+            if (null == count || "0".equals(count)) {
                 continue;
             }
             VisitsVO visitsVO = new VisitsVO();
@@ -174,6 +174,17 @@ public class LinkMapServiceImpl extends ServiceImpl<LinkMapMapper, LinkMap> impl
             String key = RedisUtils.getKey(CacheConstants.LINK_VISITS, id);
             redisTemplate.delete(key);
         }
+    }
+
+    @Override
+    public Boolean updateLinkMapById(LinkMap linkMap) {
+        LinkMap entity = new LinkMap();
+        entity.setId(linkMap.getId());
+        entity.setType(linkMap.getType());
+        entity.setRemark(linkMap.getRemark());
+        entity.setExpireTime(linkMap.getExpireTime());
+        entity.setEmail(linkMap.getEmail());
+        return this.updateById(entity);
     }
 
 }

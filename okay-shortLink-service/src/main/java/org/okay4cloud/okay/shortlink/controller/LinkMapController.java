@@ -84,7 +84,7 @@ public class LinkMapController {
     @PutMapping
     public R<Boolean> update(@Valid @RequestBody LinkMap linkMap) {
         LOGGER.info("更新链接 {}", linkMap);
-        return R.ok(linkMapService.updateById(linkMap));
+        return R.ok(linkMapService.updateLinkMapById(linkMap));
     }
 
     /**

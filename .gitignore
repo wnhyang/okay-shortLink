@@ -34,7 +34,6 @@ target/
 *.zip
 *.tar
 *.tar.gz
-*.log.gz
 *.versionsBackup
 
 ### vscode ###
@@ -43,6 +42,7 @@ target/
 ### logs ###
 /logs/
 *.log
+*.log.gz
 
 ### temp ignore ###
 *.cache

@@ -14,10 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -33,6 +30,9 @@ public class MyXxlJob {
 
     private final EmailService emailService;
 
+    /**
+     * 扫表，3天内过期的进行邮件通知
+     */
     @XxlJob("emailJobHandler")
     public void emailJobHandler() {
         LOGGER.info("emailJobHandler exec......");
@@ -44,7 +44,7 @@ public class MyXxlJob {
                 .ge(LinkMap::getExpireTime, now)
                 .le(LinkMap::getExpireTime, now3));
         LOGGER.info("即将过期的短链接{}", linkMaps);
-        XxlJobHelper.log(linkMaps.toString());
+        XxlJobHelper.log("即将过期的短链接 {}", linkMaps);
         if (!CollUtil.isEmpty(linkMaps)) {
             Map<String, List<LinkMap>> collect = linkMaps.stream().collect(Collectors.groupingBy(LinkMap::getEmail));
             LOGGER.info("分组后{}", collect);
@@ -58,6 +58,8 @@ public class MyXxlJob {
                     model.put("list", list);
                     model.put("instance", UUID.randomUUID().toString());
                     emailService.sendHtmlMail(to, "短链接即将过期提醒", model);
+                    XxlJobHelper.log("发送邮件给 {}", to);
+                    XxlJobHelper.log("即将过期列表 {}", list);
                 }
             }
         }
