@@ -3,7 +3,7 @@ package org.okay4cloud.okay.shortlink.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.okay4cloud.okay.shortlink.api.dto.LinkMapDTO;
 import org.okay4cloud.okay.shortlink.api.entity.LinkMap;
-import org.okay4cloud.okay.shortlink.api.vo.VisitsVO;
+import org.okay4cloud.okay.shortlink.api.vo.Visits;
 
 import java.util.List;
 
@@ -64,7 +64,7 @@ public interface LinkMapService extends IService<LinkMap> {
      * @param id 链接id
      * @return 访问量列表
      */
-    List<VisitsVO> getVisits(Long id);
+    Visits getVisits(Long id);
 
     /**
      * 根据id获取链接访问量
@@ -73,7 +73,7 @@ public interface LinkMapService extends IService<LinkMap> {
      * @param days 天数
      * @return 访问量
      */
-    List<VisitsVO> getVisits(Long id, long days);
+    Visits getVisits(Long id, long days);
 
     /**
      * 清空链接缓存

@@ -3,22 +3,24 @@ package org.okay4cloud.okay.shortlink.api.vo;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author wnhyang
- * @date 2023/3/11
+ * @date 2023/3/30
  **/
 @Data
-public class VisitsVO implements Serializable {
+public class Visits implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     /**
-     * 日期
+     * 总数
      */
-    private String date;
+    private int total;
 
     /**
-     * 数量
+     * 访问量集合
      */
-    private String count;
+    private List<VisitsVO> visitsVOList;
 }

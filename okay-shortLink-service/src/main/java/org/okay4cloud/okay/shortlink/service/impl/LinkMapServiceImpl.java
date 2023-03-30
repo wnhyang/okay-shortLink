@@ -11,6 +11,7 @@ import org.okay4cloud.okay.common.core.exception.CheckedException;
 import org.okay4cloud.okay.common.core.util.RedisUtils;
 import org.okay4cloud.okay.shortlink.api.dto.LinkMapDTO;
 import org.okay4cloud.okay.shortlink.api.entity.LinkMap;
+import org.okay4cloud.okay.shortlink.api.vo.Visits;
 import org.okay4cloud.okay.shortlink.api.vo.VisitsVO;
 import org.okay4cloud.okay.shortlink.constant.CacheConstants;
 import org.okay4cloud.okay.shortlink.mapper.LinkMapMapper;
@@ -158,17 +159,19 @@ public class LinkMapServiceImpl extends ServiceImpl<LinkMapMapper, LinkMap> impl
     }
 
     @Override
-    public List<VisitsVO> getVisits(Long id) {
+    public Visits getVisits(Long id) {
         return getVisits(id, RedisUtils.TIME_OUT_30);
     }
 
     @Override
-    public List<VisitsVO> getVisits(Long id, long days) {
+    public Visits getVisits(Long id, long days) {
         LinkMap linkMap = baseMapper.selectById(id);
         if (null == linkMap) {
             return null;
         }
         LocalDate now = LocalDate.now();
+        Visits visits = new Visits();
+        int total = 0;
         List<VisitsVO> visitsVOList = new ArrayList<>();
         for (int i = 0; i < days; i++) {
             String date = now.minusDays(i).toString();
@@ -177,12 +180,15 @@ public class LinkMapServiceImpl extends ServiceImpl<LinkMapMapper, LinkMap> impl
             if (null == count || "0".equals(count)) {
                 continue;
             }
+            total += Integer.parseInt(count);
             VisitsVO visitsVO = new VisitsVO();
             visitsVO.setDate(date);
             visitsVO.setCount(count);
             visitsVOList.add(visitsVO);
         }
-        return visitsVOList;
+        visits.setTotal(total);
+        visits.setVisitsVOList(visitsVOList);
+        return visits;
     }
 
     @Override

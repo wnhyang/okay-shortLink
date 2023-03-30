@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.okay4cloud.okay.common.core.util.R;
 import org.okay4cloud.okay.shortlink.api.dto.LinkMapDTO;
 import org.okay4cloud.okay.shortlink.api.entity.LinkMap;
-import org.okay4cloud.okay.shortlink.api.vo.VisitsVO;
+import org.okay4cloud.okay.shortlink.api.vo.Visits;
 import org.okay4cloud.okay.shortlink.service.LinkMapService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,7 +109,7 @@ public class LinkMapController {
      * @return R
      */
     @GetMapping("/v/{id:\\d+}")
-    public R<List<VisitsVO>> getVisits(@PathVariable Long id) {
+    public R<Visits> getVisits(@PathVariable Long id) {
         LOGGER.info("查看链接访问量 {}", id);
         return R.ok(linkMapService.getVisits(id));
     }
