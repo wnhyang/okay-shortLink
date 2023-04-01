@@ -5,9 +5,13 @@
 
 ## 运行条件
 > 列出运行该项目所必须的条件和相关依赖  
-* 条件一
-* 条件二
-* 条件三
+* Java1.8
+* Maven3.6
+* MySQL5.7
+* Redis6
+* Nacos
+* XXL-JOB
+* Docker
 
 
 

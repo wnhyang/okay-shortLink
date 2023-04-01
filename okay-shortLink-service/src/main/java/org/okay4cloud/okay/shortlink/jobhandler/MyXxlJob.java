@@ -43,8 +43,8 @@ public class MyXxlJob {
         List<LinkMap> linkMaps = linkMapMapper.selectList(new LambdaQueryWrapper<LinkMap>()
                 .ge(LinkMap::getExpireTime, now)
                 .le(LinkMap::getExpireTime, now3));
-        LOGGER.info("即将过期的短链接{}", linkMaps);
-        XxlJobHelper.log("即将过期的短链接 {}", linkMaps);
+        LOGGER.info("即将过期的短链接数量{}", linkMaps.size());
+        XxlJobHelper.log("即将过期的短链接数量{}", linkMaps.size());
         if (!CollUtil.isEmpty(linkMaps)) {
             Map<String, List<LinkMap>> collect = linkMaps.stream().collect(Collectors.groupingBy(LinkMap::getEmail));
             LOGGER.info("分组后{}", collect);
@@ -58,8 +58,8 @@ public class MyXxlJob {
                     model.put("list", list);
                     model.put("instance", UUID.randomUUID().toString());
                     emailService.sendHtmlMail(to, "短链接即将过期提醒", model);
-                    XxlJobHelper.log("发送邮件给 {}", to);
-                    XxlJobHelper.log("即将过期列表 {}", list);
+                    LOGGER.info("发给 {} 数量{}", to, list.size());
+                    XxlJobHelper.log("发给 {} 数量{}", to, list.size());
                 }
             }
         }
