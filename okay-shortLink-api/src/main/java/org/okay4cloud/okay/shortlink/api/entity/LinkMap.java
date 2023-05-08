@@ -1,6 +1,5 @@
 package org.okay4cloud.okay.shortlink.api.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -31,7 +30,7 @@ public class LinkMap extends BaseEntity {
     /**
      * 主键id
      */
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
+    @TableId("id")
     private Long id;
 
     /**
