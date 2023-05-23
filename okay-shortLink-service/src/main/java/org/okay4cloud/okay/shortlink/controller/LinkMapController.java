@@ -38,7 +38,6 @@ public class LinkMapController {
      */
     @GetMapping("/all")
     public R<List<LinkMap>> all() {
-        LOGGER.info("查询全部数据。。。");
         return R.ok(linkMapService.list());
     }
 
@@ -50,7 +49,6 @@ public class LinkMapController {
      */
     @GetMapping("/list")
     public R<IPage<LinkMap>> list(Page page, LinkMap linkMap) {
-        LOGGER.info("分页查询 size {},current {},linkMap {}", page.getSize(), page.getCurrent(), linkMap);
         return R.ok(linkMapService.page(page, Wrappers.query(linkMap)));
     }
 
@@ -62,7 +60,6 @@ public class LinkMapController {
      */
     @GetMapping("/{id:\\d+}")
     public R<LinkMap> getById(@PathVariable Long id) {
-        LOGGER.info("查询短链接id {}", id);
         return R.ok(linkMapService.getLinkMapById(id));
     }
 
@@ -74,7 +71,6 @@ public class LinkMapController {
      */
     @PostMapping
     public R<Boolean> save(@Valid @RequestBody LinkMapDTO linkMapDTO) {
-        LOGGER.info("生成短链接 {}", linkMapDTO);
         return R.ok(linkMapService.saveLinkMap(linkMapDTO));
     }
 
@@ -86,7 +82,6 @@ public class LinkMapController {
      */
     @PutMapping
     public R<Boolean> update(@Valid @RequestBody LinkMap linkMap) {
-        LOGGER.info("更新链接 {}", linkMap);
         return R.ok(linkMapService.updateLinkMapById(linkMap));
     }
 
@@ -98,7 +93,6 @@ public class LinkMapController {
      */
     @DeleteMapping("/{ids}")
     public R<Boolean> deleteByIds(@PathVariable List<Long> ids) {
-        LOGGER.info("删除链接ids {}", ids.toString());
         return R.ok(linkMapService.deleteLinkMapByIds(ids));
     }
 
@@ -110,7 +104,6 @@ public class LinkMapController {
      */
     @GetMapping("/v/{id:\\d+}")
     public R<Visits> getVisits(@PathVariable Long id) {
-        LOGGER.info("查看链接访问量 {}", id);
         return R.ok(linkMapService.getVisits(id));
     }
 
@@ -121,7 +114,6 @@ public class LinkMapController {
      */
     @DeleteMapping("/cache")
     public R<Boolean> clearLinkMapCache() {
-        LOGGER.info("清空链接缓存。。。");
         linkMapService.clearLinkMapCache();
         return R.ok(true);
     }

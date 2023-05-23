@@ -39,7 +39,6 @@ public class RedirectController {
     @ResponseBody
     @GetMapping("/config/info")
     public String info() {
-        LOGGER.info(info);
         return info;
     }
 
@@ -51,7 +50,6 @@ public class RedirectController {
      */
     @GetMapping("/r/{code}")
     public String redirect(@PathVariable("code") String code) {
-        LOGGER.info("重定向code {}", code);
         return REDIRECT + linkMapService.redirect(code);
     }
 
