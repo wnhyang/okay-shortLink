@@ -90,10 +90,10 @@ public class LogAspect {
         String[] argNames = methodSignature.getParameterNames();
         Object[] argValues = pjp.getArgs();
         StringBuilder sb = new StringBuilder();
-        sb.append("\n╔------------------------------------------");
-        sb.append("\n║ Method Name : ").append(methodSignature.getName());
-        sb.append("\n║ URL         : ").append(request.getRequestURI());
-        sb.append("\n║ HTTP Method : ").append(request.getMethod());
+        sb.append("\n------------------------------------------");
+        sb.append("\nMethod Name : ").append(methodSignature.getName());
+        sb.append("\nURL         : ").append(request.getRequestURI());
+        sb.append("\nHTTP Method : ").append(request.getMethod());
 
         Map<String, Object> args = Maps.newHashMapWithExpectedSize(argValues.length);
         for (int i = 0; i < argNames.length; i++) {
@@ -102,8 +102,8 @@ public class LogAspect {
             // 被忽略时，标记为 ignore 字符串，避免和 null 混在一起
             args.put(argName, !isIgnoreArgs(argValue) ? argValue : "[ignore]");
         }
-        sb.append("\n║").append(objectMapper.writeValueAsString(args));
-        sb.append("\n╚==========================================");
+        sb.append("\n").append(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(args));
+        sb.append("\n==========================================");
         log.info(sb.toString());
     }
 
@@ -116,16 +116,16 @@ public class LogAspect {
         }
 
         // 将响应结果转换为 JSON 字符串，并打印
-        String resultJsonString = "";
+        String resultJsonString;
         if (result instanceof R) {
-            resultJsonString = objectMapper.writeValueAsString(result);
+            resultJsonString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(result);
         } else {
-            resultJsonString = objectMapper.writeValueAsString(R.ok(result));
+            resultJsonString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(R.ok(result));
         }
 
-        log.info("\n╔------------------------------------------" +
-                "\n║ Response :" + resultJsonString +
-                "\n╚==========================================");
+        log.info("\n------------------------------------------" +
+                "\nResponse :" + resultJsonString +
+                "\n==========================================");
     }
 
     private static boolean isIgnoreArgs(Object object) {
