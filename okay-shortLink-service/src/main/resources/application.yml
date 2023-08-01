@@ -1,5 +1,5 @@
 server:
-  port: 3301
+  port: 8890
 spring:
   application:
     name: @artifactId@
@@ -7,16 +7,16 @@ spring:
     nacos:
       discovery:
         server-addr: ${NACOS_HOST:nacos}:${NACOS_PORT:8848}
-        namespace: @nacosNamespace@
+        namespace: @nacos.namespace@
         group: @nacos.group@
       config:
         server-addr: ${spring.cloud.nacos.discovery.server-addr}
-        namespace: @nacosNamespace@
+        namespace: @nacos.namespace@
         group: @nacos.group@
   config:
     import:
+      - optional:nacos:okay-common.yml
       - optional:nacos:${spring.application.name}-${spring.profiles.active}.yml
-      - optional:nacos:${spring.application.name}-xxl-job-${spring.profiles.active}.properties
 
   profiles:
     active: @profiles.active@
