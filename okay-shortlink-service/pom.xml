@@ -12,12 +12,6 @@
     <artifactId>okay-shortlink-service</artifactId>
     <packaging>jar</packaging>
 
-    <properties>
-        <okay.short-link.api.version>1.0-SNAPSHOT</okay.short-link.api.version>
-        <dynamic-ds.version>3.5.1</dynamic-ds.version>
-        <guava.version>31.1-jre</guava.version>
-    </properties>
-
     <dependencies>
         <!-- 依赖服务 -->
         <dependency>
