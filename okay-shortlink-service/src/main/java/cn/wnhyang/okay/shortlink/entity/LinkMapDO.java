@@ -14,10 +14,6 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 /**
- * <p>
- *
- * </p>
- *
  * @author wnhyang
  * @since 2023-02-21
  */

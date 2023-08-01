@@ -10,9 +10,7 @@ import org.apache.ibatis.annotations.Mapper;
 import java.util.Arrays;
 
 /**
- * <p>
  * Mapper 接口
- * </p>
  *
  * @author wnhyang
  * @since 2023-02-21

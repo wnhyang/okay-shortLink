@@ -10,9 +10,7 @@ import cn.wnhyang.okay.shortlink.vo.linkmap.LinkMapUpdateReqVO;
 import java.util.List;
 
 /**
- * <p>
  * 服务类
- * </p>
  *
  * @author wnhyang
  * @since 2023-02-21
